@@ -11,14 +11,9 @@ class App extends Component {
           <p>
             My Spotify Suggestion Music Tool 
           </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <button className="btn btn-success mt-3" onClick={()=> window.location='http://localhost:8888/login'}>
+            Log In with your account
+          </button>
         </header>
       </div>
     );
