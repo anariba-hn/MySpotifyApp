@@ -34,7 +34,14 @@ class App extends Component {
             <header className="App-header">
               <img src={logo} className="App-logo" alt="logo" style={{width: 80, height: 80}}/>
                 <h1> Welcome back {this.state.user.name} </h1>
+                <form className="form-inline">
+                  <div className="form-group mt-2 mb-2">
+                    <input type="text" id="search" placeholder="Insert some artist" />
+                  </div>
+                  <button className="btn btn-success ml-2">Build Playlist</button>
+                </form>
             </header>
+            
             </div>   
             :
             <div>     
