@@ -3,15 +3,38 @@ import logo from './logo.png';
 import queryString from 'query-string';
 import './App.css';
 
+
+class NewPlaylist extends Component {
+  render(){
+    return (
+      <div className="card">
+        <img className="card-img-top" src=".../100px180/?text=Album img" alt="Playlist image" />
+        <div className="card-body">
+          <ul className="list-group list-group-flush">
+            <li className="list-group-item" value="Item 1"/>
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
+
 class App extends Component {
   constructor(){
     super();
     this.state = {
-      apiData: {}
-    }
+      apiData: {},
+      onClick : (e) => {
+
+      }
+    };
   }
 
   componentDidMount() {
+    /*
+      GET an acces token from the OAuth server to login an user otherwise
+      will return to the home LogIn section  
+    */
     let parsed = queryString.parse(window.location.search);
     let accessToken = parsed.access_token;
     if (!accessToken)
@@ -26,6 +49,10 @@ class App extends Component {
     }))
   }
 
+  buildPlaylist(e){
+    e.preventDefault();
+  }
+
   render() {
     return (
       <div className="App">
@@ -38,10 +65,9 @@ class App extends Component {
                   <div className="form-group mt-2 mb-2">
                     <input type="text" id="search" placeholder="Insert some artist" />
                   </div>
-                  <button className="btn btn-success ml-2">Build Playlist</button>
+                  <button onClick={this.buildPlaylist} className="btn btn-success ml-2">Build Playlist</button>
                 </form>
             </header>
-            
             </div>   
             :
             <div>     
