@@ -86,8 +86,8 @@ class App extends Component {
   }
 
   /*
-    This Method will collect artist name from an input
-    split it out and search for each IDs
+    This Method will collect an artist ID wish help to find albums
+    and build a suggestion playlist
   */
   searchArtist(){
     /* var str = this.state.artist
@@ -99,7 +99,12 @@ class App extends Component {
     fetch('https://api.spotify.com/v1/search?q='+this.state.artist+'&type=artist', {
       headers: {'Authorization': 'Bearer ' + accessToken}
     }).then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => this.setState({
+      /* let artistId = data.artists.items[0].images[0]
+      console.log(artistId) */
+      img: data.artists.items[0].images[1].url
+    }))
+    
   }
 
   /*
@@ -129,7 +134,8 @@ class App extends Component {
                 </form>
                 <div className="card mt-5">
                   <div className="card-body mycard">
-                    <p>You are currently playing: { this.state.user.playing }</p>
+                    <p>You are currently looking for: </p>
+                    <img src={ this.state.img }/>
                   </div>
                 </div>
             </header>
