@@ -100,9 +100,8 @@ class App extends Component {
       headers: {'Authorization': 'Bearer ' + accessToken}
     }).then(response => response.json())
     .then(data => this.setState({
-      /* let artistId = data.artists.items[0].images[0]
-      console.log(artistId) */
-      img: data.artists.items[0].images[1].url
+      id : data.artists.items[0].id
+      /* img: data.artists.items[0].images[2].url */
     }))
     
   }
@@ -134,7 +133,7 @@ class App extends Component {
                 </form>
                 <div className="card mt-5">
                   <div className="card-body mycard">
-                    <p>You are currently looking for: </p>
+                    <p>You are currently looking for : {this.state.id}</p>
                     <img src={ this.state.img }/>
                   </div>
                 </div>
