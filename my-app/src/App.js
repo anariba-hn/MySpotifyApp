@@ -8,7 +8,7 @@ class NewPlaylist extends Component {
   render(){
     return (
       <div className="card">
-        <img className="card-img-top" src=".../100px180/?text=Album img" alt="Playlist image" />
+        <img className="card-img-top" src=".../100px180/?text=Album img" alt="Playlist" />
         <div className="card-body">
           <ul className="list-group list-group-flush">
             <li className="list-group-item" value="Item 1"/>
@@ -23,11 +23,17 @@ class App extends Component {
   constructor(){
     super();
     this.state = {
+      artist: '',
+      artistArray: [],
       apiData: {},
       onClick : (e) => {
 
-      }
+      },
     };
+    this.getAccessToken = this.getAccessToken.bind(this)
+    this.handleArtist = this.handleArtist.bind(this)
+    this.searchArtist = this.searchArtist.bind(this)
+    this.buildPlaylist = this.buildPlaylist.bind(this)
   }
 
   componentDidMount() {
@@ -35,22 +41,76 @@ class App extends Component {
       GET an acces token from the OAuth server to login an user otherwise
       will return to the home LogIn section  
     */
-    let parsed = queryString.parse(window.location.search);
-    let accessToken = parsed.access_token;
+    let accessToken = this.getAccessToken()
     if (!accessToken)
       return;
     fetch('https://api.spotify.com/v1/me', {
       headers: {'Authorization': 'Bearer ' + accessToken}
-    }).then(response => response.json())
+    }).then(function(response) {
+      if(response.ok)
+        return response.json()
+      else
+        window.location='http://localhost:3000'
+    })
     .then(data => this.setState({
       user: {
         name: data.display_name
       }
     }))
+
+    //NEEDS TO CHANGE SCOPE IN THE SERVER SIDE
+    /* fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+      headers: {'Authorization': 'Bearer ' + accessToken}
+    }).then(response => response.json())
+    .then(data => console.log(data))
+     */
+
   }
 
+  /*
+      SET an acces token for the OAuth server
+  */
+  getAccessToken(){
+    let parsed = queryString.parse(window.location.search);
+    let accessToken = parsed.access_token;
+    return accessToken
+  }
+
+  /*
+    This Method will build a new playlist generated 
+    by random tracks from user artist search
+  */
   buildPlaylist(e){
-    e.preventDefault();
+    e.preventDefault()
+    this.searchArtist()
+  }
+
+  /*
+    This Method will collect artist name from an input
+    split it out and search for each IDs
+  */
+  searchArtist(){
+    /* var str = this.state.artist
+    var myArray = str.split(" ")
+    split.forEach((element, i) => {
+      this.setState.artistArray[i] = element
+    }); */ 
+    let accessToken = this.getAccessToken()
+    fetch('https://api.spotify.com/v1/search?q='+this.state.artist+'&type=artist', {
+      headers: {'Authorization': 'Bearer ' + accessToken}
+    }).then(response => response.json())
+    .then(data => console.log(data))
+  }
+
+  /*
+    This Method will handle the inputs value
+  */
+ handleArtist(e){
+    e.preventDefault()
+    this.setState({
+      artist : e.target.value
+    })
+    console.log(this.state.artist)
   }
 
   render() {
@@ -59,24 +119,29 @@ class App extends Component {
         { this.state.user ?
             <div>     
             <header className="App-header">
-              <img src={logo} className="App-logo" alt="logo" style={{width: 80, height: 80}}/>
-                <h1> Welcome back {this.state.user.name} </h1>
+              <img src={ logo } className="App-logo" alt="logo"/>
+                <h1> Welcome back { this.state.user.name } </h1>
                 <form className="form-inline">
                   <div className="form-group mt-2 mb-2">
-                    <input type="text" id="search" placeholder="Insert some artist" />
+                    <input type="text" name="artist" placeholder="Insert some artist" onChange = { this.handleArtist }/>
                   </div>
-                  <button onClick={this.buildPlaylist} className="btn btn-success ml-2">Build Playlist</button>
+                  <button onClick={ this.buildPlaylist } className="btn btn-success ml-2">Build Playlist</button>
                 </form>
+                <div className="card mt-5">
+                  <div className="card-body mycard">
+                    <p>You are currently playing: { this.state.user.playing }</p>
+                  </div>
+                </div>
             </header>
             </div>   
-            :
+            : 
             <div>     
               <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" style={{width: 80, height: 80}}/>
+                <img src={ logo } className="App-logo" alt="logo"/>
                 <p>
                   My Spotify Suggestion Music Tool 
                 </p>
-                <button className="btn btn-success mt-3" onClick={()=> window.location='http://localhost:8888/login'}>
+                <button className="btn btn-success mt-3" onClick={ () => window.location='http://localhost:8888/login' }>
                   Log In with your account
                 </button>
               </header>
