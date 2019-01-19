@@ -3,44 +3,23 @@ import logo from './logo.png';
 import queryString from 'query-string';
 import './App.css';
 
-
-class NewPlaylist extends Component {
-  render(){
-    return (
-      <div className="card">
-        <img className="card-img-top" src=".../100px180/?text=Album img" alt="Playlist" />
-        <div className="card-body">
-          <ul className="list-group list-group-flush">
-            <li className="list-group-item" value="Item 1"/>
-          </ul>
-        </div>
-      </div>
-    );
-  }
-}
-
 class App extends Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
       artist: '',
-      artistArray: [],
+      tracksArray: [],
       apiData: {},
       onClick : (e) => {
-
       },
     };
     this.getAccessToken = this.getAccessToken.bind(this)
     this.handleArtist = this.handleArtist.bind(this)
     this.searchArtist = this.searchArtist.bind(this)
-    this.buildPlaylist = this.buildPlaylist.bind(this)
+    this.searchOn = this.searchOn.bind(this)
   }
 
   componentDidMount() {
-    /*
-      GET an acces token from the OAuth server to login an user otherwise
-      will return to the home LogIn section  
-    */
     let accessToken = this.getAccessToken()
     if (!accessToken)
       return;
@@ -57,58 +36,35 @@ class App extends Component {
         name: data.display_name
       }
     }))
-
-    //NEEDS TO CHANGE SCOPE IN THE SERVER SIDE
-    /* fetch('https://api.spotify.com/v1/me/player/currently-playing', {
-      headers: {'Authorization': 'Bearer ' + accessToken}
-    }).then(response => response.json())
-    .then(data => console.log(data))
-     */
-
   }
 
-  /*
-      SET an acces token for the OAuth server
-  */
   getAccessToken(){
     let parsed = queryString.parse(window.location.search);
     let accessToken = parsed.access_token;
     return accessToken
   }
 
-  /*
-    This Method will build a new playlist generated 
-    by random tracks from user artist search
-  */
-  buildPlaylist(e){
+  searchOn(e){
     e.preventDefault()
     this.searchArtist()
   }
 
-  /*
-    This Method will collect an artist ID wish help to find albums
-    and build a suggestion playlist
-  */
   searchArtist(){
-    /* var str = this.state.artist
-    var myArray = str.split(" ")
-    split.forEach((element, i) => {
-      this.setState.artistArray[i] = element
-    }); */ 
     let accessToken = this.getAccessToken()
     fetch('https://api.spotify.com/v1/search?q='+this.state.artist+'&type=artist', {
       headers: {'Authorization': 'Bearer ' + accessToken}
     }).then(response => response.json())
-    .then(data => this.setState({
-      id : data.artists.items[0].id
-      /* img: data.artists.items[0].images[2].url */
-    }))
-    
+      .then(data => {
+        this.tracksId = data.artists.items[0].id
+        this.setState({
+        name : data.artists.items[0].name,
+        img: data.artists.items[0].images[1].url,
+        follow: data.artists.items[0].followers.total
+      })
+      console.log(data)
+    })
   }
 
-  /*
-    This Method will handle the inputs value
-  */
  handleArtist(e){
     e.preventDefault()
     this.setState({
@@ -129,12 +85,17 @@ class App extends Component {
                   <div className="form-group mt-2 mb-2">
                     <input type="text" name="artist" placeholder="Insert some artist" onChange = { this.handleArtist }/>
                   </div>
-                  <button onClick={ this.buildPlaylist } className="btn btn-success ml-2">Build Playlist</button>
+                  <button onClick={ this.searchOn } className="btn btn-success ml-2">Search</button>
                 </form>
                 <div className="card mt-5">
                   <div className="card-body mycard">
-                    <p>You are currently looking for : {this.state.id}</p>
-                    <img src={ this.state.img }/>
+                    <p>You are currently looking for : {this.state.name}</p>
+                    <img src={ this.state.img } />
+                    { this.state.follow ?
+                    <p>Fallowers: {this.state.follow}</p>
+                    :
+                    <p></p>
+                    }
                   </div>
                 </div>
             </header>
