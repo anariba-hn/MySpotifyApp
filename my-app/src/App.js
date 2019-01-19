@@ -87,17 +87,15 @@ class App extends Component {
                   </div>
                   <button onClick={ this.searchOn } className="btn btn-success ml-2">Search</button>
                 </form>
+                { this.state.follow ?
                 <div className="card mt-5">
                   <div className="card-body mycard">
                     <p>You are currently looking for : {this.state.name}</p>
                     <img src={ this.state.img } />
-                    { this.state.follow ?
                     <p>Fallowers: {this.state.follow}</p>
-                    :
-                    <p></p>
-                    }
                   </div>
-                </div>
+                </div> : null
+                }
             </header>
             </div>   
             : 
@@ -107,8 +105,8 @@ class App extends Component {
                 <p>
                   My Spotify Suggestion Music Tool 
                 </p>
-                <button className="btn btn-success mt-3" onClick={ () => window.location='http://localhost:8888/login' }>
-                  Log In with your account
+                <button className="btn btn-success" onClick={ () => window.location='http://localhost:8888/login' }>
+                  Log In with your Spotify account
                 </button>
               </header>
             </div>    
